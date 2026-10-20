@@ -1,0 +1,165 @@
+/**
+ * HomeScreen.js
+ *
+ * The main screen a user sees after logging in.
+ *
+ * This file is intentionally kept SHORT — it only assembles the
+ * pre-built components and wires up their callbacks.
+ * All the visual logic lives in the individual component files.
+ *
+ * Component tree:
+ *
+ *  <SafeAreaView>                  ← handles notch / status-bar insets
+ *    <AppHeader />                 ← top bar (JOSHVA AI + online badge + avatar)
+ *    <ScrollView>                  ← scrollable content area
+ *      <WelcomeCard />             ← "Welcome back, Alex" hero card
+ *      <InstantActions />          ← 2-column shortcut tiles
+ *      <RecentQueries />             ← recent conversation list
+ *      <SessionControls />         ← Switch Workspace + Log Out
+ *    </ScrollView>
+ *    <View (bottom bar)>
+ *      <ChatInputBar />            ← floating text input
+ *      <BottomNavBar />            ← Chat / Knowledge / History / Profile tabs
+ *    </View>
+ *  </SafeAreaView>
+ *
+ * Props:
+ *  - data      (any)       – user / session data from the auth service
+ *  - onLogout  (function)  – called when the user confirms logout
+ */
+
+import React, { useState } from 'react';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  StatusBar,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+// ── Import all components from the single barrel export ───────────────────────
+import {
+  AppHeader,
+  WelcomeCard,
+  InstantActions,
+  RecentQueries,
+  SessionControls,
+  ChatInputBar,
+  BottomNavBar,
+} from '../components';
+
+import { colors, spacing } from '../theme';
+
+// ─── Main Screen ──────────────────────────────────────────────────────────────
+export default function HomeScreen({ data, onLogout }) {
+  // Which bottom tab is active ('chat' | 'knowledge' | 'history' | 'profile')
+  const [activeTab, setActiveTab] = useState('chat');
+
+  // Text currently typed into the chat input bar
+  const [chatInput, setChatInput] = useState('');
+
+  // ── Handlers ────────────────────────────────────────────────────────────────
+
+  // Called when user presses the send button
+  const handleSend = () => {
+    if (!chatInput.trim()) return;
+    console.log('User sent message:', chatInput);
+    // TODO: wire up to your AI / backend API
+    setChatInput('');
+  };
+
+  // Called when user taps a recent query row
+  const handleQueryPress = (queryId) => {
+    console.log('Tapped query:', queryId);
+    // TODO: navigate to that conversation thread
+  };
+
+  // Called when user taps "View History"
+  const handleViewHistory = () => {
+    setActiveTab('history');
+    // TODO: navigate to history screen / tab
+  };
+
+  // Called when user taps "Switch Workspace"
+  const handleSwitchWorkspace = () => {
+    console.log('Switch workspace tapped');
+    // TODO: open workspace switcher modal / screen
+  };
+
+  // ── Render ──────────────────────────────────────────────────────────────────
+  return (
+    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+      <StatusBar barStyle="dark-content" backgroundColor={colors.surface} />
+
+      {/* ── Top bar ── */}
+      <AppHeader onAvatarPress={() => setActiveTab('profile')} />
+
+      {/* ── Scrollable content ── */}
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero / greeting card */}
+        <WelcomeCard
+          userName="Alex"              // TODO: pass real user name from `data`
+          onDailyAction={() => console.log('Daily action tapped')}
+        />
+
+        {/* 2-column shortcut tiles */}
+        <InstantActions />
+
+        {/* Recent conversations */}
+        <RecentQueries
+          onViewHistory={handleViewHistory}
+          onQueryPress={handleQueryPress}
+        />
+
+        {/* Workspace + logout controls */}
+        <SessionControls
+          onSwitchWorkspace={handleSwitchWorkspace}
+          onLogout={onLogout}
+        />
+      </ScrollView>
+
+      {/* ── Pinned bottom bar (input + tab nav) ── */}
+      <View style={styles.bottomBar}>
+        <ChatInputBar
+          value={chatInput}
+          onChangeText={setChatInput}
+          onSend={handleSend}
+          onMic={() => console.log('Mic tapped')}
+        />
+        <BottomNavBar activeTab={activeTab} onTabPress={setActiveTab} />
+      </View>
+    </SafeAreaView>
+  );
+}
+
+// ─── Styles ───────────────────────────────────────────────────────────────────
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.surface,
+  },
+
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: spacing.gutter,
+    gap: spacing.lg,
+    paddingBottom: 120,   // extra room so content isn't hidden behind bottom bar
+  },
+
+  // Pinned footer ──────────────────────────────────────
+  bottomBar: {
+    backgroundColor: colors.surface,
+    // top shadow (upward)
+    shadowColor: '#0f172a',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 20,
+    elevation: 8,
+  },
+});

@@ -1,0 +1,53 @@
+# Local environment and editor settings
+.env
+.env.*
+!.env.example
+**/.vscode/
+.claude/
+
+# Operating system files
+.DS_Store
+
+# Generated dependencies and build output
+node_modules/
+**/target/
+**/build/
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+/Client/ios/
+/Client/android/
+.metro-health-check*
+.gradle/
+.apt_generated/
+.factorypath
+.project
+.classpath
+.settings/
+.springBeans
+.sts4-cache/
+*.orig.*
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+.idea/
+*.tsbuildinfo
+*.pem
+*.p8
+*.p12
+*.key
+*.jks
+*.mobileprovision
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Local logs
+*.log
+Server/*/HELP.md
+
+# Personal source document used only for local PDF ingestion
+/Server/commonaiagent/src/main/resources/JoshvaKoppala_Resume.pdf

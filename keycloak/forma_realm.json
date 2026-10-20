@@ -1,0 +1,29 @@
+{
+  "realm": "forma_realm",
+  "enabled": true,
+  "displayName": "Forma Realm",
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "clients": [
+    {
+      "clientId": "forma_client",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "forma://*",
+        "http://localhost:19006/*"
+      ],
+      "webOrigins": [
+        "http://localhost:19006"
+      ]
+    }
+  ]
+}

@@ -12,7 +12,7 @@
  *  <SafeAreaView>                  ← handles notch / status-bar insets
  *    <AppHeader />                 ← top bar (JOSHVA AI + online badge + avatar)
  *    <ScrollView>                  ← scrollable content area
- *      <WelcomeCard />             ← "Welcome back, Alex" hero card
+ *      <WelcomeCard />             ← personalized welcome hero card
  *      <InstantActions />          ← 2-column shortcut tiles
  *      <RecentQueries />             ← recent conversation list
  *      <SessionControls />         ← Switch Workspace + Log Out
@@ -30,10 +30,13 @@
 
 import React, { useState } from 'react';
 import {
+  Alert,
   View,
   ScrollView,
   StyleSheet,
   StatusBar,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -49,6 +52,7 @@ import {
 } from '../components';
 
 import { colors, spacing } from '../theme';
+import { aiAgentService } from '../services/aiAgentService';
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function HomeScreen({ data, onLogout }) {
@@ -57,15 +61,26 @@ export default function HomeScreen({ data, onLogout }) {
 
   // Text currently typed into the chat input bar
   const [chatInput, setChatInput] = useState('');
+  const [usePdfContext, setUsePdfContext] = useState(true);
 
   // ── Handlers ────────────────────────────────────────────────────────────────
 
   // Called when user presses the send button
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!chatInput.trim()) return;
-    console.log('User sent message:', chatInput);
-    // TODO: wire up to your AI / backend API
-    setChatInput('');
+
+    try {
+      const answer = usePdfContext
+        ? await aiAgentService.askWithContext(chatInput)
+        : await aiAgentService.askDirectly(chatInput);
+      setChatInput((currentInput) => currentInput === chatInput ? '' : currentInput);
+      Alert.alert('JOSHVA AI', answer || 'The AI returned an empty response.');
+    } catch (error) {
+      Alert.alert(
+        'Unable to send message',
+        error instanceof Error ? error.message : 'An unexpected error occurred.',
+      );
+    }
   };
 
   // Called when user taps a recent query row
@@ -88,56 +103,65 @@ export default function HomeScreen({ data, onLogout }) {
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.surface} />
+    <KeyboardAvoidingView
+      style={styles.keyboardAvoidingView}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.surface} />
 
-      {/* ── Top bar ── */}
-      <AppHeader onAvatarPress={() => setActiveTab('profile')} />
+        {/* ── Top bar ── */}
+        <AppHeader onAvatarPress={() => setActiveTab('profile')} />
 
-      {/* ── Scrollable content ── */}
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Hero / greeting card */}
-        <WelcomeCard
-          userName="Alex"              // TODO: pass real user name from `data`
-          onDailyAction={() => console.log('Daily action tapped')}
-        />
+        {/* ── Scrollable content ── */}
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Hero / greeting card */}
+          <WelcomeCard
+            userName={data}
+            onDailyAction={() => console.log('Daily action tapped')}
+          />
 
-        {/* 2-column shortcut tiles */}
-        <InstantActions />
+          {/* 2-column shortcut tiles */}
+          <InstantActions />
 
-        {/* Recent conversations */}
-        <RecentQueries
-          onViewHistory={handleViewHistory}
-          onQueryPress={handleQueryPress}
-        />
+          {/* Recent conversations */}
+          <RecentQueries
+            onViewHistory={handleViewHistory}
+            onQueryPress={handleQueryPress}
+          />
 
-        {/* Workspace + logout controls */}
-        <SessionControls
-          onSwitchWorkspace={handleSwitchWorkspace}
-          onLogout={onLogout}
-        />
-      </ScrollView>
+          {/* Workspace + logout controls */}
+          <SessionControls
+            onSwitchWorkspace={handleSwitchWorkspace}
+            onLogout={onLogout}
+          />
+        </ScrollView>
 
-      {/* ── Pinned bottom bar (input + tab nav) ── */}
-      <View style={styles.bottomBar}>
-        <ChatInputBar
-          value={chatInput}
-          onChangeText={setChatInput}
-          onSend={handleSend}
-          onMic={() => console.log('Mic tapped')}
-        />
-        <BottomNavBar activeTab={activeTab} onTabPress={setActiveTab} />
-      </View>
-    </SafeAreaView>
+        {/* ── Pinned bottom bar (input + tab nav) ── */}
+        <View style={styles.bottomBar}>
+          <ChatInputBar
+            value={chatInput}
+            onChangeText={setChatInput}
+            onSend={handleSend}
+            useContext={usePdfContext}
+            onToggleContext={() => setUsePdfContext((enabled) => !enabled)}
+          />
+          <BottomNavBar activeTab={activeTab} onTabPress={setActiveTab} />
+        </View>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   safeArea: {
     flex: 1,
     backgroundColor: colors.surface,

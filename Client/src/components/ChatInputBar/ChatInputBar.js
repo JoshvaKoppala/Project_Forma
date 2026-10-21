@@ -10,8 +10,8 @@
  *    Shadow: 0 2px 12px -2px rgba(0,112,255,0.08)
  *  - Leading icon: auto_awesome, color #727787, 18.33×18.33
  *  - Input: padding 9px 4px, 13px / 400 / #727787 placeholder
- *  - Mic button: 36×36, border-radius 9999
- *    Icon: mic, color #424655, 11.67×15.83
+ *  - PDF context toggle: 36px high, border-radius 9999
+ *    Shows whether PDF context is included with the request
  *  - Send button: 36×36, bg #0056C6, border-radius 9999
  *    Shadow: 0 1px 2px rgba(0,0,0,0.05)
  *    Icon: arrow_upward, white, 12×12
@@ -20,13 +20,15 @@
  *  - value        (string)
  *  - onChangeText (function)
  *  - onSend       (function)
- *  - onMic        (function)
+ *  - useContext   (boolean)
+ *  - onToggleContext (function)
  *  - placeholder  (string)
  */
 
 import React from 'react';
 import {
   View,
+  Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
@@ -38,7 +40,8 @@ export default function ChatInputBar({
   value,
   onChangeText,
   onSend,
-  onMic,
+  useContext,
+  onToggleContext,
   placeholder = 'Ask JOSHVA anything...',
 }) {
   return (
@@ -58,19 +61,30 @@ export default function ChatInputBar({
           onChangeText={onChangeText}
           placeholder={placeholder}
           placeholderTextColor="#727787"  // Figma: color #727787
+          selectionColor={colors.primary}
           returnKeyType="send"
           onSubmitEditing={onSend}
           multiline={false}
+          underlineColorAndroid="transparent"
         />
 
-        {/* Mic button: 36×36, border-radius 9999 */}
+        {/* Toggle whether the request uses PDF context */}
         <TouchableOpacity
-          style={styles.micBtn}
-          onPress={onMic}
-          accessibilityLabel="Voice input"
+          style={[styles.contextToggle, useContext && styles.contextToggleActive]}
+          onPress={onToggleContext}
+          accessibilityLabel={useContext ? 'PDF context on' : 'PDF context off'}
+          accessibilityRole="switch"
+          accessibilityState={{ checked: useContext }}
+          activeOpacity={0.8}
         >
-          {/* Icon: mic, color #424655, ~12px */}
-          <MaterialIcons name="mic" size={20} color="#424655" />
+          <MaterialIcons
+            name={useContext ? 'toggle-on' : 'toggle-off'}
+            size={20}
+            color={useContext ? colors.primary : colors.onSurfaceVariant}
+          />
+          <Text style={[styles.contextToggleText, useContext && styles.contextToggleTextActive]}>
+            PDF
+          </Text>
         </TouchableOpacity>
 
         {/* Send button: 36×36, bg #0056C6, border-radius 9999 */}
@@ -123,22 +137,38 @@ const styles = StyleSheet.create({
   // Figma: padding 9px 4px (top/bottom), flex-grow 1
   input: {
     flex: 1,
-    fontFamily: 'Plus Jakarta Sans',
+    minWidth: 0,
     fontSize: 13,                // Figma: 13px
     lineHeight: 16,
     fontWeight: '400',
-    color: '#0B1C30',
+    color: colors.onSurface,
+    backgroundColor: '#FFFFFF',
     paddingVertical: 9,          // Figma: padding 9px 4px
     paddingHorizontal: 4,
   },
 
-  // Mic button ─────────────────────────────────────────
-  micBtn: {
-    width: 36,                   // Figma: 36×36
+  // PDF context toggle ─────────────────────────────────
+  contextToggle: {
+    minWidth: 54,
     height: 36,
     borderRadius: 9999,
+    flexDirection: 'row',
+    gap: 2,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 5,
+    backgroundColor: '#F1F3F9',
+  },
+  contextToggleActive: {
+    backgroundColor: '#EAF1FF',
+  },
+  contextToggleText: {
+    color: colors.onSurfaceVariant,
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  contextToggleTextActive: {
+    color: colors.primary,
   },
 
   // Send button ────────────────────────────────────────

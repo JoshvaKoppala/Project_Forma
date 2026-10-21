@@ -39,9 +39,9 @@ function OnlineBadge() {
 function BrandLogo() {
   return (
     <View style={styles.brandRow}>
-      {/* Blue rounded square with neurology icon */}
+      {/* Blue rounded square with psychology icon */}
       <View style={styles.logoBox}>
-        <MaterialIcons name="neurology" size={15} color={colors.onPrimary} />
+        <MaterialIcons name="psychology" size={15} color={colors.onPrimary} />
       </View>
 
       {/* Name + AI pill */}

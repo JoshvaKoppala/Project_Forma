@@ -18,4 +18,9 @@ public class AiagentaddcontextController {
         return commonaiagentService.askWithContext(query.getQuery());
     }
 
+    @PostMapping("/ask")
+    public String askDirectly(@RequestBody QueryDto query) {
+        return commonaiagentService.askDirectly(query.getQuery());
+    }
+
 }

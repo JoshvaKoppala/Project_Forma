@@ -59,4 +59,11 @@ public class AiagentaddcontextService {
                 .call()
                 .content();
     }
+
+    public String askDirectly(String userQuery) {
+        return chatClient.prompt()
+                .user(userQuery)
+                .call()
+                .content();
+    }
 }

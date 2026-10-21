@@ -28,7 +28,7 @@
  *  - onLogout  (function)  – called when the user confirms logout
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   View,
@@ -53,6 +53,7 @@ import {
 
 import { colors, spacing } from '../theme';
 import { aiAgentService } from '../services/aiAgentService';
+import { storageService } from '../services/storageService';
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function HomeScreen({ data, onLogout }) {
@@ -62,6 +63,35 @@ export default function HomeScreen({ data, onLogout }) {
   // Text currently typed into the chat input bar
   const [chatInput, setChatInput] = useState('');
   const [usePdfContext, setUsePdfContext] = useState(true);
+  const [recentQueries, setRecentQueries] = useState([]);
+  const username = typeof data === 'string' ? data.trim() : '';
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (!username) {
+      setRecentQueries([]);
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    setRecentQueries([]);
+    storageService.getRecentQueries(username)
+      .then((queries) => {
+        if (isMounted) setRecentQueries(queries);
+      })
+      .catch((error) => {
+        Alert.alert(
+          'Unable to load recent queries',
+          error instanceof Error ? error.message : 'An unexpected error occurred.',
+        );
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [username]);
 
   // ── Handlers ────────────────────────────────────────────────────────────────
 
@@ -74,6 +104,20 @@ export default function HomeScreen({ data, onLogout }) {
         ? await aiAgentService.askWithContext(chatInput)
         : await aiAgentService.askDirectly(chatInput);
       setChatInput((currentInput) => currentInput === chatInput ? '' : currentInput);
+
+      if (username) {
+        try {
+          await storageService.addRecentQuery(username, chatInput, usePdfContext);
+          const queries = await storageService.getRecentQueries(username);
+          setRecentQueries(queries);
+        } catch (error) {
+          Alert.alert(
+            'Query completed, but history was not saved',
+            error instanceof Error ? error.message : 'An unexpected error occurred.',
+          );
+        }
+      }
+
       Alert.alert('JOSHVA AI', answer || 'The AI returned an empty response.');
     } catch (error) {
       Alert.alert(
@@ -130,6 +174,7 @@ export default function HomeScreen({ data, onLogout }) {
 
           {/* Recent conversations */}
           <RecentQueries
+            queries={recentQueries}
             onViewHistory={handleViewHistory}
             onQueryPress={handleQueryPress}
           />

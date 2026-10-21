@@ -15,13 +15,10 @@
  *  - Row summary: 13px / 400 / #424655
  *  - Timestamp: 11px / 500 / #727787, padding-left 8px
  *
- * Icons (color #424655):
- *  - Row 1: alt_route      (16px)
- *  - Row 2: code           (16px)
- *  - Row 3: psychology_alt (16px)
+ * Query icon: chat (MaterialIcons, 16px, #424655)
  *
  * Props:
- *  - queries        (array)    – list of query objects
+ *  - queries        (array)    – recent query objects
  *  - onViewHistory  (function) – "View History" press
  *  - onQueryPress   (function) – called with queryId on row tap
  */
@@ -31,30 +28,18 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { colors } from '../../theme';
 
-// ─── Default mock data ────────────────────────────────────────────────────────
-export const DEFAULT_QUERIES = [
-  {
-    id: '1',
-    iconName: 'alt-route',                // MaterialIcons
-    title: 'Project roadmap & milestones Q3',
-    summary: 'Synthesized 4 key sprint phases',
-    timestamp: '12m ago',
-  },
-  {
-    id: '2',
-    iconName: 'code',
-    title: 'REST API authentication schemas',
-    summary: 'Provided OAuth2 bearer snippet',
-    timestamp: '2h ago',
-  },
-  {
-    id: '3',
-    iconName: 'psychology-alt',           // MaterialIcons
-    title: 'JOSHVA security & privacy policies',
-    summary: 'Zero-retention model confirmed',
-    timestamp: 'Yesterday',
-  },
-];
+function formatTimestamp(createdAt) {
+  const elapsedMinutes = Math.floor((Date.now() - new Date(createdAt).getTime()) / 60000);
+
+  if (elapsedMinutes < 1) return 'Just now';
+  if (elapsedMinutes < 60) return `${elapsedMinutes}m ago`;
+
+  const elapsedHours = Math.floor(elapsedMinutes / 60);
+  if (elapsedHours < 24) return `${elapsedHours}h ago`;
+  if (elapsedHours < 48) return 'Yesterday';
+
+  return new Date(createdAt).toLocaleDateString();
+}
 
 // ─── Single row ───────────────────────────────────────────────────────────────
 // Figma: flex-row, justify space-between, padding 12px, border-radius 12, height 62
@@ -85,7 +70,7 @@ function QueryRow({ iconName, title, summary, timestamp, onPress }) {
 
 // ─── Exported component ───────────────────────────────────────────────────────
 export default function RecentQueries({
-  queries = DEFAULT_QUERIES,
+  queries = [],
   onViewHistory,
   onQueryPress,
 }) {
@@ -104,13 +89,20 @@ export default function RecentQueries({
 
       {/* List card */}
       <View style={styles.listCard}>
-        {queries.map((query) => (
-          <QueryRow
-            key={query.id}
-            {...query}
-            onPress={() => onQueryPress?.(query.id)}
-          />
-        ))}
+        {queries.length > 0 ? (
+          queries.map((query) => (
+            <QueryRow
+              key={query.id}
+              iconName="chat"
+              title={query.title}
+              summary={query.summary}
+              timestamp={formatTimestamp(query.createdAt)}
+              onPress={() => onQueryPress?.(query.id)}
+            />
+          ))
+        ) : (
+          <Text style={styles.emptyState}>No recent queries yet.</Text>
+        )}
       </View>
     </View>
   );
@@ -144,6 +136,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.primary,
     textAlign: 'center',
+  },
+  emptyState: {
+    padding: 12,
+    color: colors.onSurfaceVariant,
+    fontSize: 13,
   },
 
   // List card ───────────────────────────────────────────

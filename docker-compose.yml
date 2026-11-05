@@ -28,6 +28,18 @@ services:
     volumes:
       - vector_data:/var/lib/postgresql/data
 
+  forma_db:
+    image: postgres:16-alpine
+    container_name: forma_db
+    environment:
+      POSTGRES_DB: forma_db
+      POSTGRES_USER: forma_user
+      POSTGRES_PASSWORD: forma_password
+    ports:
+      - "5435:5432"
+    volumes:
+      - forma_data:/var/lib/postgresql/data
+
   keycloak:
     image: quay.io/keycloak/keycloak:latest
     container_name: keycloak_server
@@ -53,3 +65,4 @@ services:
 volumes:
   keycloak_data:
   vector_data:
+  forma_data:

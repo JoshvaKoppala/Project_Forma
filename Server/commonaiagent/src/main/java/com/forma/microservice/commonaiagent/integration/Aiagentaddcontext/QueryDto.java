@@ -1,4 +1,4 @@
-package com.forma.microservice.commonaiagent.integration.Aiagentaddcontext;
+package com.forma.microservice.commonaiagent.integration.aiagentaddcontext;
 
 public class QueryDto {
 

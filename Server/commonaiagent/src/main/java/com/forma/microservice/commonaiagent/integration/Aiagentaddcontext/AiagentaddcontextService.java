@@ -1,4 +1,4 @@
-package com.forma.microservice.commonaiagent.integration.Aiagentaddcontext;
+package com.forma.microservice.commonaiagent.integration.aiagentaddcontext;
 
 import java.util.List;
 import java.util.stream.Collectors;

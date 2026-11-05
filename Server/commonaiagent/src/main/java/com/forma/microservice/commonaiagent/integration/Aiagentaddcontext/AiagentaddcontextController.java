@@ -1,4 +1,4 @@
-package com.forma.microservice.commonaiagent.integration.Aiagentaddcontext;
+package com.forma.microservice.commonaiagent.integration.aiagentaddcontext;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

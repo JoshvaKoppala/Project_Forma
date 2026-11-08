@@ -1,4 +1,4 @@
-package com.forma.microservice.commonutility.utilityfileupload.models;
+package com.forma.microservice.commonutility.utilitymodels;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.forma.microservice.commonutility.utilityfileupload.models.FormaFile;
-import com.forma.microservice.commonutility.utilityfileupload.repository.UtilityfileRepository;
+import com.forma.microservice.commonutility.utilitymodels.FormaFile;
+import com.forma.microservice.commonutility.utilityrepositories.UtilityfileRepository;
+
 
 
 @RestController

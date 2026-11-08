@@ -27,7 +27,6 @@ public class AiagentaddcontextService {
                 .query(userQuery)
                 .topK(3)
                 .build();
-
                 System.out.println("SerchRequest-----------> "+searchRequest);
 
         List<Document> similarDocuments = vectorStore.similaritySearch(searchRequest);

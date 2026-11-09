@@ -10,12 +10,12 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AiagentaddcontextService {
+public class AiAgentAddContextService {
 
     private final ChatClient chatClient;
     private final VectorStore vectorStore;
 
-    public AiagentaddcontextService(ChatClient.Builder chatClientBuilder, VectorStore vectorStore) {
+    public AiAgentAddContextService(ChatClient.Builder chatClientBuilder, VectorStore vectorStore) {
         this.chatClient = chatClientBuilder.build();
         this.vectorStore = vectorStore;
     }

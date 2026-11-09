@@ -1,4 +1,4 @@
-package com.forma.microservice.baseproject.SecurityConfig;
+package com.forma.microservice.commoncore.baseconfiguration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +21,7 @@ public class CommonSecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .anyRequest().authenticated()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {}));
 
         return httpSecurity.build();
     }

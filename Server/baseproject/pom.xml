@@ -10,11 +10,15 @@
         <relativePath/>
     </parent>
     <groupId>com.forma.microservice</groupId>
-    <artifactId>base-service-parent</artifactId>
+    <artifactId>baseproject</artifactId>
     <version>0.0.1</version>
     <packaging>pom</packaging>
     <modules>
         <module>base-data-parent</module>
+        <module>../commoncore</module>
+        <module>../commonutility</module>    
+        <module>../commonaiagent</module>    
+        <module>../commonuserlogin</module>
     </modules>
     <name>base-service-parent</name>
 
@@ -58,6 +62,11 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -66,7 +75,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2025.1.3</version>
+                <version>2025.1.4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

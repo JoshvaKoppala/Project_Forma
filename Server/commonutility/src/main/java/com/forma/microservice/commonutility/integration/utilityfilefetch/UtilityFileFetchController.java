@@ -7,11 +7,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.forma.microservice.commonutility.utilitymodels.FormaFile;
-
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 @RequestMapping("/file")
@@ -23,7 +22,7 @@ public class UtilityFileFetchController {
     }
 
     @GetMapping("/fetch")
-    public ResponseEntity<byte[]> fetchFile(@RequestBody String fileIdString) throws FileNotFoundException {
+    public ResponseEntity<byte[]> fetchFile(@RequestParam("fileId") String fileIdString) throws FileNotFoundException {
         FormaFile file = utilityFileFetchService.getFile(fileIdString);
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(file.getFileType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")

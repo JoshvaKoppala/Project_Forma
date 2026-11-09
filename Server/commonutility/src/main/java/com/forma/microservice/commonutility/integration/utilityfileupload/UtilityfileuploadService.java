@@ -27,7 +27,7 @@ public class UtilityfileuploadService {
             formaFile.setFileDate(file.getBytes());
             FormaFile savedFile = utilityfileRepository.save(formaFile);
             utilityfileuploadeventpublisher.publishFileUploadEvent(savedFile.getFileId(), savedFile.getFileName());
-            return "File uploaded successfully";
+            return "File uploaded successfully"+ savedFile.getFileId();
 
         } catch (Exception e) {
             return "File upload failed!";

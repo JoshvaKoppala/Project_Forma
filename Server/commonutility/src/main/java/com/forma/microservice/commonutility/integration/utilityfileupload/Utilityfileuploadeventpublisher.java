@@ -18,7 +18,7 @@ public class Utilityfileuploadeventpublisher {
     public void publishFileUploadEvent(String fileId, String fileName) {
         FileUploadEvent uploadEvent = new FileUploadEvent(fileId, fileName);
 
-        kafkaTemplate.send(TOPIC, fileId, uploadEvent);
+        kafkaTemplate.send(TOPIC,uploadEvent);
         System.out.println("Published Kafka event for fileId: " + fileId + " to topic: " + TOPIC);
 
     }

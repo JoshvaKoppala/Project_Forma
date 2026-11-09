@@ -6,7 +6,7 @@
     
     <parent>
         <groupId>com.forma.microservice</groupId>
-        <artifactId>base-service-parent</artifactId>
+        <artifactId>baseproject</artifactId>
         <version>0.0.1</version>
         <relativePath>../base-data-parent/pom.xml</relativePath> <!-- Adjust relative path as needed -->
     </parent>

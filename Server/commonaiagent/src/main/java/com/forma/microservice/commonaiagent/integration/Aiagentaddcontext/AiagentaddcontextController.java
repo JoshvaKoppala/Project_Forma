@@ -5,11 +5,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class AiagentaddcontextController {
+public class AiAgentAddContextController {
 
-    private final AiagentaddcontextService commonaiagentService;
+    private final AiAgentAddContextService commonaiagentService;
 
-    public AiagentaddcontextController(AiagentaddcontextService commonaiagentService) {
+    public AiAgentAddContextController(AiAgentAddContextService commonaiagentService) {
         this.commonaiagentService = commonaiagentService;
     }
 
